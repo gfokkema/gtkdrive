@@ -1,29 +1,23 @@
-/*
- * auth_wrapper.h
- *
- *  Created on: Feb 5, 2014
- *      Author: gero
- */
-
 #ifndef AUTH_WRAPPER_H_
 #define AUTH_WRAPPER_H_
+
+#include "googleapis/base/scoped_ptr.h"
+#include "googleapis/client/auth/oauth2_authorization.h"
+#include "googleapis/client/transport/http_transport.h"
+#include "googleapis/client/util/status.h"
 
 namespace googleapis {
 
 class AuthWrapper {
 public:
-	AuthWrapper();
-	virtual ~AuthWrapper();
-	static util::Status Startup();
-	util::Status Authorize();
-	void Run();
+	static util::Status									Startup(client::HttpTransport *transport_);
+
+	util::Status										Authorize(client::OAuth2Credential *credential_);
+	client::OAuth2Credential							getCredentials();
 private:
-	client::OAuth2Credential credential_;
-	static scoped_ptr<google_drive_api::DriveService> service_;
-	static scoped_ptr<client::OAuth2AuthorizationFlow> flow_;
-	static scoped_ptr<client::HttpTransportLayerConfig> config_;
+	static scoped_ptr<client::OAuth2AuthorizationFlow>	flow_;
 };
 
-} // namespace googleapis
+}
 
 #endif /* AUTH_WRAPPER_H_ */
