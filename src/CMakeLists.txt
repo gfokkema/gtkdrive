@@ -1,20 +1,4 @@
-include_directories (${CALENDAR_SOURCE_DIR}/include)
-link_directories (${CALENDAR_SOURCE_DIR}/lib)
+cmake_minimum_required (VERSION 2.6)
+project (CALENDAR)
 
-add_executable (calendar calendar_sample_main.cpp)
-target_link_libraries(calendar googleapis_oauth2)
-target_link_libraries(calendar googleapis_curl_http)
-target_link_libraries(calendar googleapis_http)
-target_link_libraries(calendar googleapis_internal)
-target_link_libraries(calendar googleapis_json)
-target_link_libraries(calendar googleapis_jsoncpp)
-target_link_libraries(calendar googleapis_utils)
-
-target_link_libraries(calendar googleapis_oauth2)
-target_link_libraries(calendar google_calendar_api)
-
-target_link_libraries(calendar curl)
-target_link_libraries(calendar gflags)
-target_link_libraries(calendar glog)
-target_link_libraries(calendar jsoncpp)
-target_link_libraries(calendar pthread)
+add_subdirectory (src)
