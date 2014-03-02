@@ -4,21 +4,17 @@
 #include <gtkmm.h>
 
 namespace googleapis {
-  class DriveWrapper;
+  class Auth;
+  namespace client {
+    class OAuth2RequestOptions;
+  }
 }
-
-typedef struct {
-  Gtk::Widget            *widget;
-  Glib::ustring          title;
-  Gtk::AssistantPageType type;
-  gboolean               complete;
-} PageInfo;
 
 class GtkDriveAssistant : public Gtk::Assistant
 {
 public:
   /* Constructor */
-  GtkDriveAssistant (googleapis::DriveWrapper *drive);
+  GtkDriveAssistant ();
   virtual ~GtkDriveAssistant ();
 
   /* Members */
@@ -44,7 +40,7 @@ private:
   Gtk::Grid  m_page_5;
   Gtk::Label m_page_5_label;
 
-  googleapis::DriveWrapper *drive;
+  googleapis::Auth *m_auth;
 };
 
 #endif /* WIZARD_MM_H_ */

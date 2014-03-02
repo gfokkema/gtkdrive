@@ -1,4 +1,6 @@
-#include "drive_wrapper.h"
+#include <iostream>
+
+#include "gtkdrive.h"
 #include "wizard-mm.h"
 
 using namespace Gtk;
@@ -10,11 +12,10 @@ main (int    argc,
 {
   Glib::RefPtr<Application> app = Gtk::Application::create(argc, argv, "org.gtkmm.gtkdrive");
 
-  DriveWrapper *drive = new DriveWrapper;
-  GtkDriveAssistant assistant (drive);
+  GtkDrive drive;
+  drive.Startup();
 
-  //DriveWrapper *drive = new DriveWrapper();
-  //drive->dir();
+  app->run(drive);
 
-  return app->run (assistant);
+  return 0;
 }

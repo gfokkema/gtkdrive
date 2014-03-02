@@ -1,12 +1,12 @@
 #include <iostream>
 
-#include "drive_wrapper.h"
+#include "gtkdrive.h"
 #include "wizard-mm.h"
 
 using namespace googleapis;
 using namespace Gtk;
 
-GtkDriveAssistant::GtkDriveAssistant (DriveWrapper *drive)
+GtkDriveAssistant::GtkDriveAssistant ()
 : m_page_1_label ("This wizard will help you set up your\n"\
                   "Google Drive account for use with GtkDrive"),
   m_page_2_label ("Please enter your account name"),
