@@ -1,7 +1,15 @@
+# Use PkgConfig to find GTKMM
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(GTKMM REQUIRED gtkmm-3.0)
+
+include_directories (${GTKMM_INCLUDE_DIRS})
 include_directories (${DRIVE_SOURCE_DIR}/include)
+link_directories (${GTKMM_LIBRARY_DIRS})
 link_directories (${DRIVE_SOURCE_DIR}/lib)
 
-add_executable (drive auth_wrapper.cpp drive_wrapper.cpp main.cpp)
+add_executable (drive auth_wrapper.cpp drive_wrapper.cpp wizard-mm.cpp main.cpp)
+
+target_link_libraries(drive ${GTKMM_LIBRARIES})
 
 target_link_libraries(drive google_drive_api)
 
@@ -33,16 +41,3 @@ add_definitions(${GTK3_CFLAGS_OTHER})
 add_executable (wizard wizard.c)
 
 target_link_libraries(wizard ${GTK3_LIBRARIES})
-
-
-# Use PkgConfig to find GTKMM
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(GTKMM REQUIRED gtkmm-3.0)
-
-# Add GTK+ to include and link directories
-include_directories(${GTKMM_INCLUDE_DIRS})
-link_directories(${GTKMM_LIBRARY_DIRS})
-
-add_executable (wizardmm wizard-mm.cpp)
-
-target_link_libraries(wizardmm ${GTKMM_LIBRARIES})

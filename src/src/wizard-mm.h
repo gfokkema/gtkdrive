@@ -3,6 +3,10 @@
 
 #include <gtkmm.h>
 
+namespace googleapis {
+  class DriveWrapper;
+}
+
 typedef struct {
   Gtk::Widget            *widget;
   Glib::ustring          title;
@@ -14,7 +18,7 @@ class GtkDriveAssistant : public Gtk::Assistant
 {
 public:
   /* Constructor */
-  GtkDriveAssistant ();
+  GtkDriveAssistant (googleapis::DriveWrapper *drive);
   virtual ~GtkDriveAssistant ();
 
   /* Members */
@@ -39,6 +43,8 @@ private:
   Gtk::Label m_page_4_label;
   Gtk::Grid  m_page_5;
   Gtk::Label m_page_5_label;
+
+  googleapis::DriveWrapper *drive;
 };
 
 #endif /* WIZARD_MM_H_ */

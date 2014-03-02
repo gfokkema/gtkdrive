@@ -1,10 +1,12 @@
 #include <iostream>
 
+#include "drive_wrapper.h"
 #include "wizard-mm.h"
 
+using namespace googleapis;
 using namespace Gtk;
 
-GtkDriveAssistant::GtkDriveAssistant ()
+GtkDriveAssistant::GtkDriveAssistant (DriveWrapper *drive)
 : m_page_1_label ("This wizard will help you set up your\n"\
                   "Google Drive account for use with GtkDrive"),
   m_page_2_label ("Please enter your account name"),
@@ -91,14 +93,4 @@ void GtkDriveAssistant::on_assistant_page_2()
 void GtkDriveAssistant::on_assistant_page_3()
 {
   set_page_complete(m_page_3, true);
-}
-
-int
-main (int    argc,
-      char** argv)
-{
-  Glib::RefPtr<Application> app = Gtk::Application::create(argc, argv, "org.gtkmm.gtkdrive");
-
-  GtkDriveAssistant assistant;
-  return app->run (assistant);
 }

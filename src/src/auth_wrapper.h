@@ -10,12 +10,12 @@ namespace googleapis {
 
 class AuthWrapper {
 public:
-	static util::Status									Startup(client::HttpTransport *transport_);
+  static util::Status      Startup        (client::HttpTransport *transport_);
 
-	util::Status										Authorize(client::OAuth2Credential *credential_);
-	client::OAuth2Credential							getCredentials();
+  util::Status             Authorize      (client::OAuth2Credential *credential_);
+  client::OAuth2Credential getCredentials ();
 private:
-	static scoped_ptr<client::OAuth2AuthorizationFlow>	flow_;
+  static scoped_ptr<client::OAuth2AuthorizationFlow> flow_;
 };
 
 }
