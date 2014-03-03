@@ -8,26 +8,24 @@
 #include "google/drive_api/drive_service.h"
 
 #include "auth.h"
-#include "wizard-mm.h"
+#include "wizard.h"
+
+using namespace std;
+using namespace googleapis::client;
+using namespace googleapis::util;
+using namespace google_drive_api;
 
 namespace googleapis {
 
-using namespace std;
-using namespace client;
-using namespace util;
-
-using google_drive_api::DriveService;
-
 Auth::Auth (HttpTransport *transport)
 : m_client_secret ("client_secret.json"),
-  p_transport     (transport),
-  p_flow          (0)
+  p_flow          (0),
+  p_transport     (transport)
 {
 }
 
 Auth::~Auth ()
 {
-  delete p_transport;
 }
 
 Status
@@ -38,10 +36,6 @@ Auth::Startup()
 
   p_flow = OAuth2AuthorizationFlow::MakeFlowFromClientSecretsPath (m_client_secret, p_transport, &status);
   if (!status.ok()) return status;
-
-  p_flow->set_default_scopes  (DriveService::SCOPES::DRIVE);
-  p_flow->mutable_client_spec ()->set_redirect_uri (OAuth2AuthorizationFlow::kOutOfBandUrl);
-  p_flow->set_authorization_code_callback (NewPermanentCallback (Auth::getAuthorization, p_flow) );
 
   status = FileCredentialStoreFactory::GetSystemHomeDirectoryStorePath(&home_path);
   if (status.ok())
@@ -56,11 +50,19 @@ Auth::Startup()
   return status;
 }
 
+void
+Auth::SetCallback (Wizard *wizard)
+{
+  p_flow->set_default_scopes  (DriveService::SCOPES::DRIVE);
+  p_flow->mutable_client_spec ()->set_redirect_uri (OAuth2AuthorizationFlow::kOutOfBandUrl);
+  p_flow->set_authorization_code_callback (NewPermanentCallback (wizard, &Wizard::on_authorization, p_flow) );
+}
+
 Status
-Auth::Authorize(OAuth2Credential *credential)
+Auth::Authorize (OAuth2Credential *credential, string id)
 {
   OAuth2RequestOptions options;
-  options.user_id = "gerlof.fokkema";
+  options.user_id = id;
 
   Status status = p_flow->RefreshCredentialWithOptions(options, credential);
   if (status.ok())
@@ -70,26 +72,6 @@ Auth::Authorize(OAuth2Credential *credential)
   }
 
   return status;
-}
-
-Status
-Auth::getAuthorization (OAuth2AuthorizationFlow* flow,
-                        const OAuth2RequestOptions& options,
-                        string* authorization_code)
-{
-  string url = flow->GenerateAuthorizationCodeRequestUrlWithOptions(options);
-  cout << "Enter the following URL into a browser:\n" << url << endl;
-  cout << endl;
-  cout << "Enter the browser's response to confirm authorization: ";
-
-  authorization_code->clear();
-  cin >> *authorization_code;
-  if (authorization_code->empty())
-  {
-    return StatusCanceled("Canceled");
-  } else {
-    return StatusOk();
-  }
 }
 
 }

@@ -2,9 +2,10 @@
 #define AUTH_H_
 
 /* Start forward declarations */
-class GtkDriveAssistant;
+class Wizard;
 namespace googleapis {
   namespace client {
+    class HttpTransport;
     class OAuth2AuthorizationFlow;
     class OAuth2Credential;
     class OAuth2RequestOptions;
@@ -17,20 +18,17 @@ namespace googleapis {
 
 class Auth {
 public:
-  Auth (client::HttpTransport *transport);
+  Auth  (client::HttpTransport *transport);
   ~Auth ();
 
-  util::Status             Startup          ();
-  util::Status             Authorize        (client::OAuth2Credential *credential);
-
-  static util::Status      getAuthorization (client::OAuth2AuthorizationFlow *flow,
-                                             const client::OAuth2RequestOptions& options,
-                                             string *authorization_code);
+  util::Status Startup          ();
+  void         SetCallback      (Wizard *wizard);
+  util::Status Authorize        (client::OAuth2Credential *credential,
+                                 std::string id = "gerlof.fokkema2");
 private:
-
-  const StringPiece                m_client_secret;
-  client::OAuth2AuthorizationFlow *p_flow;
   client::HttpTransport           *p_transport;
+  client::OAuth2AuthorizationFlow *p_flow;
+  const StringPiece                m_client_secret;
 };
 
 }

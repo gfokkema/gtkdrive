@@ -7,7 +7,7 @@ include_directories (${DRIVE_SOURCE_DIR}/include)
 link_directories (${GTKMM_LIBRARY_DIRS})
 link_directories (${DRIVE_SOURCE_DIR}/lib)
 
-add_executable (drive auth.cpp gtkdrive.cpp wizard-mm.cpp main.cpp)
+add_executable (drive auth.cpp gtkdrive.cpp wizard.cpp main.cpp)
 
 target_link_libraries(drive ${GTKMM_LIBRARIES})
 
