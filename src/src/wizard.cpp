@@ -13,6 +13,7 @@ using namespace Gtk;
 
 Wizard::Wizard (HttpTransport *transport)
 : p_auth               (new Auth(transport)),
+  p_credential         (new OAuth2Credential),
   p_transport          (transport),
   m_page_intro_label   ("This wizard will help you set up your\n"\
                         "Google Drive account for use with GtkDrive"),
@@ -23,9 +24,6 @@ Wizard::Wizard (HttpTransport *transport)
   p_auth->Startup     ();
   p_auth->SetCallback (this);
 
-  // TODO: call this when we have a user ID
-  // p_auth->Authorize   (&m_credential);
-
   set_title ("Wizard example");
   set_default_size (400, 300);
 
@@ -35,14 +33,15 @@ Wizard::Wizard (HttpTransport *transport)
   set_page_type      (m_page_intro, ASSISTANT_PAGE_INTRO);
   set_page_complete  (m_page_intro, true);
 
-  m_page_account.set_orientation(ORIENTATION_VERTICAL);
+  m_page_account.set_orientation (ORIENTATION_VERTICAL);
   m_page_account.add (m_page_account_label);
   m_page_account.add (m_page_account_entry);
   append_page        (m_page_account);
   set_page_title     (m_page_account, "Your account");
 
-  m_page_auth.set_orientation(ORIENTATION_VERTICAL);
-  m_page_auth_url.set_selectable(true);
+  m_page_auth.set_orientation    (ORIENTATION_VERTICAL);
+  m_page_auth_url.set_selectable (true);
+  m_page_auth_url.set_line_wrap  (true);
   m_page_auth.add    (m_page_auth_label);
   m_page_auth.add    (m_page_auth_url);
   m_page_auth.add    (m_page_auth_entry);
@@ -57,6 +56,9 @@ Wizard::Wizard (HttpTransport *transport)
 
   m_page_account_entry.signal_changed ().connect (
         sigc::mem_fun(*this, &Wizard::on_account));
+  m_page_auth_entry.signal_changed ().connect (
+        sigc::mem_fun(*this, &Wizard::on_auth));
+
   show_all_children ();
 }
 
@@ -69,19 +71,14 @@ void
 Wizard::on_account ()
 {
   Glib::ustring account = m_page_account_entry.get_text();
-  Glib::ustring::size_type atindex  = account.find_first_of ('@');
-  Glib::ustring::size_type dotindex = account.find_last_of ('.');
-  if (atindex  != account.npos &&
-      dotindex != account.npos &&
-      dotindex >  atindex &&
-      dotindex <  account.length() - 2)
-  {
-    set_page_complete (m_page_account, true);
-  }
-  else
-  {
-    set_page_complete (m_page_account, false);
-  }
+  m_page_auth_url.set_text (p_auth->GetAuthURL(account));
+  set_page_complete (m_page_account, true);
+}
+
+void
+Wizard::on_auth ()
+{
+  set_page_complete (m_page_auth, true);
 }
 
 void
@@ -94,6 +91,7 @@ Wizard::on_cancel ()
 void
 Wizard::on_apply ()
 {
+  p_auth->Authorize(p_credential);
   std::cout << "Apply was clicked" << std::endl;
   hide ();
 }
@@ -103,18 +101,14 @@ Wizard::on_authorization (OAuth2AuthorizationFlow* flow,
                           const OAuth2RequestOptions& options,
                           string* authorization_code)
 {
-  string url = flow->GenerateAuthorizationCodeRequestUrlWithOptions(options);
-  std::cout << "Enter the following URL into a browser:\n" << url << std::endl;
-  std::cout << std::endl;
-  std::cout << "Enter the browser's response to confirm authorization: ";
+  *authorization_code = m_page_auth_entry.get_text();
 
-  authorization_code->clear();
-  std::cin >> *authorization_code;
+  std::cout << "---auth callback---" << std::endl;
+  std::cout << *authorization_code << std::endl;
+
   if (authorization_code->empty())
-  {
     return StatusCanceled("Canceled");
-  } else {
+  else
     return StatusOk();
-  }
 }
 

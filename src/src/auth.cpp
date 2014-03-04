@@ -58,12 +58,16 @@ Auth::SetCallback (Wizard *wizard)
   p_flow->set_authorization_code_callback (NewPermanentCallback (wizard, &Wizard::on_authorization, p_flow) );
 }
 
-Status
-Auth::Authorize (OAuth2Credential *credential, string id)
+string
+Auth::GetAuthURL (string id)
 {
-  OAuth2RequestOptions options;
   options.user_id = id;
+  return p_flow->GenerateAuthorizationCodeRequestUrlWithOptions(options);
+}
 
+Status
+Auth::Authorize (OAuth2Credential *credential)
+{
   Status status = p_flow->RefreshCredentialWithOptions(options, credential);
   if (status.ok())
   {

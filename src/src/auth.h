@@ -23,11 +23,12 @@ public:
 
   util::Status Startup          ();
   void         SetCallback      (Wizard *wizard);
-  util::Status Authorize        (client::OAuth2Credential *credential,
-                                 std::string id = "gerlof.fokkema2");
+  std::string  GetAuthURL       (std::string id = "gerlof.fokkema");
+  util::Status Authorize        (client::OAuth2Credential *credential);
 private:
   client::HttpTransport           *p_transport;
   client::OAuth2AuthorizationFlow *p_flow;
+  client::OAuth2RequestOptions     options;
   const StringPiece                m_client_secret;
 };
 

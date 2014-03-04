@@ -27,14 +27,15 @@ public:
                                              std::string                                    *authcode);
 private:
   /* Signals */
-  void on_account      ();
-  void on_confirmation ();
+  void on_account ();
+  void on_auth    ();
 
   void on_apply  ();
   void on_cancel ();
 
-  googleapis::Auth                  *p_auth;
-  googleapis::client::HttpTransport *p_transport;
+  googleapis::Auth                     *p_auth;
+  googleapis::client::OAuth2Credential *p_credential;
+  googleapis::client::HttpTransport    *p_transport;
 
   Gtk::Grid  m_page_intro;
   Gtk::Label m_page_intro_label;
