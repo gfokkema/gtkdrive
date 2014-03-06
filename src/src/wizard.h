@@ -22,8 +22,7 @@ public:
   ~Wizard ();
 
   /* Members */
-  googleapis::util::Status on_authorization (googleapis::client::OAuth2AuthorizationFlow    *flow,
-                                             const googleapis::client::OAuth2RequestOptions &options,
+  googleapis::util::Status on_authorization (const googleapis::client::OAuth2RequestOptions &options,
                                              std::string                                    *authcode);
 private:
   /* Signals */
@@ -39,9 +38,6 @@ private:
 
   Gtk::Grid  m_page_intro;
   Gtk::Label m_page_intro_label;
-  Gtk::Grid  m_page_account;
-  Gtk::Label m_page_account_label;
-  Gtk::Entry m_page_account_entry;
   Gtk::Grid  m_page_auth;
   Gtk::Label m_page_auth_label;
   Gtk::Label m_page_auth_url;

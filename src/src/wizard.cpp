@@ -17,7 +17,6 @@ Wizard::Wizard (HttpTransport *transport)
   p_transport          (transport),
   m_page_intro_label   ("This wizard will help you set up your\n"\
                         "Google Drive account for use with GtkDrive"),
-  m_page_account_label ("Please enter your account name"),
   m_page_auth_label    ("Please enter your confirmation code"),
   m_page_confirm_label ("Please confirm your settings")
 {
@@ -32,12 +31,6 @@ Wizard::Wizard (HttpTransport *transport)
   set_page_title     (m_page_intro, "Introduction");
   set_page_type      (m_page_intro, ASSISTANT_PAGE_INTRO);
   set_page_complete  (m_page_intro, true);
-
-  m_page_account.set_orientation (ORIENTATION_VERTICAL);
-  m_page_account.add (m_page_account_label);
-  m_page_account.add (m_page_account_entry);
-  append_page        (m_page_account);
-  set_page_title     (m_page_account, "Your account");
 
   m_page_auth.set_orientation    (ORIENTATION_VERTICAL);
   m_page_auth_url.set_selectable (true);
@@ -54,8 +47,6 @@ Wizard::Wizard (HttpTransport *transport)
   set_page_type      (m_page_confirm, ASSISTANT_PAGE_CONFIRM);
   set_page_complete  (m_page_confirm, true);
 
-  m_page_account_entry.signal_changed ().connect (
-        sigc::mem_fun(*this, &Wizard::on_account));
   m_page_auth_entry.signal_changed ().connect (
         sigc::mem_fun(*this, &Wizard::on_auth));
 
@@ -65,14 +56,6 @@ Wizard::Wizard (HttpTransport *transport)
 Wizard::~Wizard ()
 {
   delete p_auth;
-}
-
-void
-Wizard::on_account ()
-{
-  Glib::ustring account = m_page_account_entry.get_text();
-  m_page_auth_url.set_text (p_auth->GetAuthURL(account));
-  set_page_complete (m_page_account, true);
 }
 
 void
@@ -97,8 +80,7 @@ Wizard::on_apply ()
 }
 
 Status
-Wizard::on_authorization (OAuth2AuthorizationFlow* flow,
-                          const OAuth2RequestOptions& options,
+Wizard::on_authorization (const OAuth2RequestOptions& options,
                           string* authorization_code)
 {
   *authorization_code = m_page_auth_entry.get_text();

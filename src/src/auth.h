@@ -1,14 +1,12 @@
 #ifndef AUTH_H_
 #define AUTH_H_
 
+#include "googleapis/client/auth/oauth2_authorization.h"
+
 /* Start forward declarations */
-class Wizard;
 namespace googleapis {
   namespace client {
     class HttpTransport;
-    class OAuth2AuthorizationFlow;
-    class OAuth2Credential;
-    class OAuth2RequestOptions;
   }
 }
 /* End forward declarations */
@@ -21,15 +19,16 @@ public:
   Auth  (client::HttpTransport *transport);
   ~Auth ();
 
-  util::Status Startup          ();
-  void         SetCallback      (Wizard *wizard);
-  std::string  GetAuthURL       (std::string id = "gerlof.fokkema");
-  util::Status Authorize        (client::OAuth2Credential *credential);
+  util::Status Init                       ();
+  util::Status Authorize                  (std::string id = "gerlof.fokkema");
+  util::Status Callback                   (const client::OAuth2RequestOptions& options,
+                                           string* authorization_code);
+  client::OAuth2Credential* GetCredential () { return &m_credential; };
 private:
   client::HttpTransport           *p_transport;
   client::OAuth2AuthorizationFlow *p_flow;
-  client::OAuth2RequestOptions     options;
   const StringPiece                m_client_secret;
+  client::OAuth2Credential         m_credential;
 };
 
 }
